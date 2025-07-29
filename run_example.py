@@ -53,7 +53,7 @@ schedule_generator = SparseLineGen(speed_ration_map)
 local_env = RailEnv(width=40,
                     height=30,
                     rail_generator=rail_generator,
-                    schedule_generator=schedule_generator,
+                    line_generator=schedule_generator,
                     number_of_agents=1,
                     obs_builder_object=DummyObservationBuilder(),
                     #malfunction_generator_and_process_data=malfunction_from_params(stochastic_data),
