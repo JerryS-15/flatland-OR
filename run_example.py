@@ -12,7 +12,7 @@ from flatland.core.env_observation_builder import DummyObservationBuilder
 from flatland.utils.rendertools import RenderTool, AgentRenderVariant
 import time, glob
 
-env_renderer_enable = True
+env_renderer_enable = False
 
 #####################################################################
 # malfunction parameters
@@ -97,7 +97,7 @@ while True:
     #####################################################################
 
     # Get action dictionary from mapf solver.
-    action =  solver.getActions(local_env, steps, 3.0)
+    action = solver.getActions(local_env, steps, 3.0)
 
     observation, all_rewards, done, info = local_env.step(action)
 
