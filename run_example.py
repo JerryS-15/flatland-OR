@@ -6,7 +6,7 @@ from libPythonCBS import PythonCBS
 # Import the Flatland rail environment
 from flatland.envs.rail_env import RailEnv
 from flatland.envs.rail_generators import SparseRailGen
-from flatland.envs.schedule_generators import sparse_schedule_generator,schedule_from_file
+from flatland.envs.line_generators import SparseLineGen
 from flatland.envs.malfunction_generators  import malfunction_from_params, MalfunctionParameters,malfunction_from_file,ParamMalfunctionGen
 from flatland.core.env_observation_builder import DummyObservationBuilder
 from flatland.utils.rendertools import RenderTool, AgentRenderVariant
@@ -42,7 +42,7 @@ speed_ration_map = {1.: 1,  # Fast passenger train
 
 # We can now initiate the schedule generator with the given speed profiles
 
-schedule_generator = sparse_schedule_generator(speed_ration_map)
+schedule_generator = SparseLineGen(speed_ration_map)
 
 
 
