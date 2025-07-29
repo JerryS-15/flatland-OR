@@ -32,7 +32,7 @@ rail_generator = SparseRailGen(max_num_cities=5,
                                        seed=10,
                                        grid_mode=False,
                                        max_rails_between_cities=1,
-                                       max_rails_in_city=3,
+                                       max_rail_pairs_in_city=3,
                                        )
 # Different agent types (trains) with different speeds.
 speed_ration_map = {1.: 1,  # Fast passenger train
