@@ -99,6 +99,8 @@ while True:
     # Get action dictionary from mapf solver.
     action = solver.getActions(local_env, steps, 3.0)
 
+    print(f"{steps}: {action}")
+
     observation, all_rewards, done, info = local_env.step(action)
 
     if env_renderer_enable:
