@@ -6,7 +6,7 @@ from libPythonCBS import PythonCBS
 # Import the Flatland rail environment
 from flatland.envs.rail_env import RailEnv
 from flatland.envs.rail_generators import SparseRailGen
-from flatland.envs.line_generators import SparseLineGen
+from flatland.envs.schedule_generators import sparse_schedule_generator,schedule_from_file
 from flatland.envs.malfunction_generators  import malfunction_from_params, MalfunctionParameters,malfunction_from_file,ParamMalfunctionGen
 from flatland.core.env_observation_builder import DummyObservationBuilder
 from flatland.utils.rendertools import RenderTool, AgentRenderVariant
@@ -32,7 +32,7 @@ rail_generator = SparseRailGen(max_num_cities=5,
                                        seed=10,
                                        grid_mode=False,
                                        max_rails_between_cities=1,
-                                       max_rail_pairs_in_city=3,
+                                       max_rails_in_city=3,
                                        )
 # Different agent types (trains) with different speeds.
 speed_ration_map = {1.: 1,  # Fast passenger train
@@ -42,7 +42,7 @@ speed_ration_map = {1.: 1,  # Fast passenger train
 
 # We can now initiate the schedule generator with the given speed profiles
 
-schedule_generator = SparseLineGen(speed_ration_map)
+schedule_generator = sparse_schedule_generator(speed_ration_map)
 
 
 
@@ -53,7 +53,7 @@ schedule_generator = SparseLineGen(speed_ration_map)
 local_env = RailEnv(width=40,
                     height=30,
                     rail_generator=rail_generator,
-                    line_generator=schedule_generator,
+                    schedule_generator=schedule_generator,
                     number_of_agents=1,
                     obs_builder_object=DummyObservationBuilder(),
                     #malfunction_generator_and_process_data=malfunction_from_params(stochastic_data),
