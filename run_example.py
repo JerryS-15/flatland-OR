@@ -5,7 +5,7 @@ from libPythonCBS import PythonCBS
 
 # Import the Flatland rail environment
 from flatland.envs.rail_env import RailEnv
-from flatland.envs.rail_generators import SparseRailGen
+from flatland.envs.rail_generators import sparse_rail_generator,rail_from_file
 from flatland.envs.schedule_generators import sparse_schedule_generator,schedule_from_file
 from flatland.envs.malfunction_generators  import malfunction_from_params, MalfunctionParameters,malfunction_from_file,ParamMalfunctionGen
 from flatland.core.env_observation_builder import DummyObservationBuilder
@@ -28,7 +28,7 @@ stochastic_data = MalfunctionParameters(malfunction_rate=0/600,  # Rate of malfu
                                         )
 
 
-rail_generator = SparseRailGen(max_num_cities=5,
+rail_generator = sparse_rail_generator(max_num_cities=5,
                                        seed=10,
                                        grid_mode=False,
                                        max_rails_between_cities=1,
