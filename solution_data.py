@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     flatland_parameters = {
         # Flatland Env
-        "number_of_agents": 5,
+        "number_of_agents": 10,
         "width": 30,
         "height": 35,
         "max_num_cities": 3,
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     # Initialize Mapf-solver
     #####################################################################
     framework = "LNS"  # "LNS" for large neighborhood search
-    default_group_size = 5 # max number of agents in a group.
+    default_group_size = 10 # max number of agents in a group.
     max_iterations = 1000
     stop_threshold = 10
     agent_priority_strategy = 3
