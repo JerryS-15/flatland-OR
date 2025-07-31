@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     flatland_parameters = {
         # Flatland Env
-        "number_of_agents": 10,
+        "number_of_agents": 5,
         "width": 30,
         "height": 35,
         "max_num_cities": 3,
