@@ -23,7 +23,7 @@ def create_env(env_params, seed):
             max_num_cities=env_params['max_num_cities'],
             grid_mode=False,
             max_rails_between_cities=env_params['max_rails_between_cities'],
-            max_rail_pairs_in_city=env_params['max_rail_pairs_in_city'],
+            max_rails_in_city=env_params['max_rail_pairs_in_city'],
         ),
         schedule_generator=sparse_schedule_generator(
             speed_ratio_map=env_params['speed_ratio_map'],
