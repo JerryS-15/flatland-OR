@@ -40,6 +40,8 @@ def create_env(env_params, seed):
         random_seed=seed
     )
 
+# def get_or_solution():
+
 if __name__ == "__main__":
 
     flatland_parameters = {
@@ -64,52 +66,90 @@ if __name__ == "__main__":
 
     seed = 0
 
-    env = create_env(flatland_parameters, seed)
-    env.reset()
+    for i in range (0, 10):
+        seed = i
+        print(f"*************************************")
+        print(f"******** Current Seeed: {seed} ********")
+        print(f"*************************************")
 
-    #####################################################################
-    # Initialize Mapf-solver
-    #####################################################################
-    framework = "LNS"  # "LNS" for large neighborhood search
-    default_group_size = 10 # max number of agents in a group.
-    max_iterations = 1000
-    stop_threshold = 10
-    agent_priority_strategy = 3
-    neighbor_generation_strategy = 3
-    debug = False
-    time_limit =200
-    replan = True
+        env = create_env(flatland_parameters, seed)
+        env.reset()
 
-    solver = PythonCBS(env, framework, time_limit, default_group_size, debug, replan,stop_threshold,agent_priority_strategy,neighbor_generation_strategy)
-    solver.search(1.1, max_iterations)
-    solver.buildMCP()
+        framework = "LNS"  # "LNS" for large neighborhood search
+        default_group_size = 10 # max number of agents in a group.
+        max_iterations = 1000
+        stop_threshold = 10
+        agent_priority_strategy = 3
+        neighbor_generation_strategy = 3
+        debug = False
+        time_limit =200
+        replan = True
 
-    #####################################################################
-    # Show the flatland visualization, for debugging
-    #####################################################################
-    if args.render:
-        env_renderer = RenderTool(env, screen_height=env.height * 50,
-                                screen_width=env.width*50,show_debug=False)
-        env_renderer.render_env(show=True, show_observations=False, show_predictions=False)
+        solver = PythonCBS(env, framework, time_limit, default_group_size, debug, replan,stop_threshold,agent_priority_strategy,neighbor_generation_strategy)
+        solver.search(1.1, max_iterations)
+        solver.buildMCP()
+
+        steps=0
+        while True:
+        
+            action = solver.getActions(env, steps, 3.0)
+        
+            # Debug
+            print(f"{steps}: {action}")
+
+            observation, all_rewards, done, info = env.step(action)
+
+            steps += 1
+            if done['__all__']:
+                solver.clearMCP()
+                break
+
+    # env = create_env(flatland_parameters, seed)
+    # env.reset()
+
+    # #####################################################################
+    # # Initialize Mapf-solver
+    # #####################################################################
+    # framework = "LNS"  # "LNS" for large neighborhood search
+    # default_group_size = 10 # max number of agents in a group.
+    # max_iterations = 1000
+    # stop_threshold = 10
+    # agent_priority_strategy = 3
+    # neighbor_generation_strategy = 3
+    # debug = False
+    # time_limit =200
+    # replan = True
+
+    # solver = PythonCBS(env, framework, time_limit, default_group_size, debug, replan,stop_threshold,agent_priority_strategy,neighbor_generation_strategy)
+    # solver.search(1.1, max_iterations)
+    # solver.buildMCP()
+
+    # #####################################################################
+    # # Show the flatland visualization, for debugging
+    # #####################################################################
+    # if args.render:
+    #     env_renderer = RenderTool(env, screen_height=env.height * 50,
+    #                             screen_width=env.width*50,show_debug=False)
+    #     env_renderer.render_env(show=True, show_observations=False, show_predictions=False)
     
-    steps=0
-    while True:
-        #####################################################################
-        # Simulation main loop
-        #####################################################################
+    # steps=0
+    # while True:
+    #     #####################################################################
+    #     # Simulation main loop
+    #     #####################################################################
         
-        action = solver.getActions(env, steps, 3.0)
+    #     action = solver.getActions(env, steps, 3.0)
         
-        # Debug
-        print(f"{steps}: {action}")
+    #     # Debug
+    #     print(f"{steps}: {action}")
 
-        observation, all_rewards, done, info = env.step(action)
+    #     observation, all_rewards, done, info = env.step(action)
         
-        if args.render:
-            env_renderer.render_env(show=True, show_observations=False, show_predictions=False)
-            time.sleep(0.5)
+    #     if args.render:
+    #         env_renderer.render_env(show=True, show_observations=False, show_predictions=False)
+    #         time.sleep(0.5)
 
-        steps += 1
-        if done['__all__']:
-            solver.clearMCP()
-            break
+    #     steps += 1
+    #     if done['__all__']:
+    #         solver.clearMCP()
+    #         break
