@@ -80,7 +80,6 @@ if __name__ == "__main__":
         data = {
             "seed": seed,
             "rail": env.rail,
-            "schedule": env.schedule,
             "agents": extract_agent_info(env)
         }
 
