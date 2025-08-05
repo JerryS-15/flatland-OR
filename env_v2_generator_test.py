@@ -3,6 +3,7 @@ import hashlib
 from tqdm import tqdm
 import numpy as np
 import pickle
+import os
 
 import flatland
 from flatland.envs.rail_env import RailEnv
@@ -40,11 +41,22 @@ def create_env(env_params, seed):
 def hash_array(arr):
     return hashlib.md5(arr.tobytes()).hexdigest()
 
+def extract_agent_info(env):
+    return [
+        {
+            "initial_position": agent.initial_position,
+            "direction": agent.direction,
+            "target": agent.target,
+            "speed": agent.speed_data["speed"]
+        } for agent in env.agents
+    ]
+
 
 if __name__ == "__main__":
 
-    init_seed = 42
-    save_path = "env_v2.pkl"
+    # init_seed = 42
+    # save_path = "env_v2.pkl"
+    os.makedirs("test_env_data", exist_ok=True)
 
     flatland_parameters = {
         # Flatland Env
@@ -61,33 +73,48 @@ if __name__ == "__main__":
         "max_duration": 50
     }
 
-    all_episodes = []
-
-    for i in tqdm(range(0, 10), desc="Generate v2.2.1 Env"):
-        seed = init_seed + i
-
+    for seed in tqdm(range(42, 52), desc="Generate v2.2.1 envs"):
         env = create_env(flatland_parameters, seed)
         env.reset()
 
-        rail_grid = env.rail.grid.astype(np.uint8)
-        rail_hash = hash_array(rail_grid)
-
-        agent_info = [(a.initial_position, a.target) for a in env.agents]
-        agent_hash = hashlib.md5(pickle.dumps(agent_info)).hexdigest()
-
-        all_episodes.append({
-            "episode_id": i + 1,
+        data = {
             "seed": seed,
-            "rail_hash": rail_hash,
-            "agent_hash": agent_hash,
-            "grid_shape": rail_grid.shape,
-            "agent_info": agent_info,
-            # Optional storage of original data（for debug）
-            "rail_grid": rail_grid
-        })
+            "rail": env.rail,
+            "schedule": env.schedule,
+            "agents": extract_agent_info(env)
+        }
 
-        tqdm.write(f"Episode {i+1}, Seed {seed} Stored.")
+        with open(f"test_env_data/env_v2_{seed}.pkl", "wb") as f:
+            pickle.dump(data, f)
+
+
+    # all_episodes = []
+
+    # for i in tqdm(range(0, 10), desc="Generate v2.2.1 Env"):
+    #     seed = init_seed + i
+
+    #     env = create_env(flatland_parameters, seed)
+    #     env.reset()
+
+    #     rail_grid = env.rail.grid.astype(np.uint8)
+    #     rail_hash = hash_array(rail_grid)
+
+    #     agent_info = [(a.initial_position, a.target) for a in env.agents]
+    #     agent_hash = hashlib.md5(pickle.dumps(agent_info)).hexdigest()
+
+    #     all_episodes.append({
+    #         "episode_id": i + 1,
+    #         "seed": seed,
+    #         "rail_hash": rail_hash,
+    #         "agent_hash": agent_hash,
+    #         "grid_shape": rail_grid.shape,
+    #         "agent_info": agent_info,
+    #         # Optional storage of original data（for debug）
+    #         "rail_grid": rail_grid
+    #     })
+
+    #     tqdm.write(f"Episode {i+1}, Seed {seed} Stored.")
     
-    with open(save_path, "wb") as f:
-        pickle.dump(all_episodes, f)
-    print(f"✅ Flatland v{flatland.__version__} test env data is saved at {save_path}.")
+    # with open(save_path, "wb") as f:
+    #     pickle.dump(all_episodes, f)
+    # print(f"✅ Flatland v{flatland.__version__} test env data is saved at {save_path}.")
