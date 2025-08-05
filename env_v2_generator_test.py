@@ -79,12 +79,15 @@ if __name__ == "__main__":
 
         data = {
             "seed": seed,
-            "rail": env.rail,
-            "agents": extract_agent_info(env)
+            "rail_grid": env.rail.grid,
+            "agent_info": extract_agent_info(env),
+            "env_params": flatland_parameters
         }
 
         with open(f"test_env_data/env_v2_{seed}.pkl", "wb") as f:
             pickle.dump(data, f)
+
+    print(f"✅ Flatland v{flatland.__version__} envs with station data saved in 'test_env_data/' folder.")
 
 
     # all_episodes = []
