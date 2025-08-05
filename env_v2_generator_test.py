@@ -51,6 +51,16 @@ def extract_agent_info(env):
         } for agent in env.agents
     ]
 
+def extract_station_info(env):
+    stations = []
+    grid = env.rail.grid
+    station_value = 1
+    for r in range(grid.shape[0]):
+        for c in range(grid.shape[1]):
+            if grid[r, c] == station_value:
+                stations.append((r, c))
+    return {"stations": stations}
+
 
 if __name__ == "__main__":
 
@@ -79,7 +89,8 @@ if __name__ == "__main__":
 
         data = {
             "seed": seed,
-            "rail_grid": env.rail.grid,
+            "rail": env.rail,
+            "stations": extract_station_info(env),
             "agent_info": extract_agent_info(env),
             "env_params": flatland_parameters
         }
