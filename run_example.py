@@ -54,13 +54,13 @@ local_env = RailEnv(width=40,
                     height=30,
                     rail_generator=rail_generator,
                     schedule_generator=schedule_generator,
-                    number_of_agents=5,
+                    number_of_agents=2,
                     obs_builder_object=DummyObservationBuilder(),
                     malfunction_generator_and_process_data=malfunction_from_params(stochastic_data),
                     # malfunction_generator=malfunction_from_params(stochastic_data),
                     # malfunction_generator=ParamMalfunctionGen(stochastic_data),
                     remove_agents_at_target=True,
-                    random_seed=100)
+                    random_seed=42)
 
 local_env.reset()
 
