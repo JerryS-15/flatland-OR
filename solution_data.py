@@ -15,7 +15,7 @@ import flatland
 import argparse
 import pickle
 import os
-import tqdm
+from tqdm import tqdm
 
 from env_v2_generator_test import extract_agent_info, extract_station_info
 
@@ -96,6 +96,13 @@ if __name__ == "__main__":
 
     seed_init = args.seed
     n_eps = args.eps
+
+    print("---------------------------------------")
+    print(f"OR Solution Data Collection Started.")
+    print(f"Initial seed: {seed_init}")
+    print(f"Number of episodes: {args.eps}")
+    print(f"Number of agents: {flatland_parameters['number_of_agents']}")
+    print("---------------------------------------")
 
     for i in tqdm(range(0, n_eps), desc="Generate OR solutions"):
         seed = seed_init + i
