@@ -10,8 +10,14 @@ from flatland.envs.schedule_generators import sparse_schedule_generator,schedule
 from flatland.envs.malfunction_generators  import malfunction_from_params, MalfunctionParameters
 from flatland.core.env_observation_builder import DummyObservationBuilder
 from flatland.utils.rendertools import RenderTool, AgentRenderVariant
-import time, glob
+import flatland
+
 import argparse
+import pickle
+import os
+import tqdm
+
+from env_v2_generator_test import extract_agent_info, extract_station_info
 
 
 def create_env(env_params, seed):
@@ -40,6 +46,26 @@ def create_env(env_params, seed):
         random_seed=seed
     )
 
+def save_env_data(env_params, save_dir, env_seed):
+    seed = env_seed
+    save_path = os.path.join(save_dir, f"env_data_v2_{seed}.pkl")
+
+    env = create_env(env_params, seed)
+    env.reset()
+
+    data = {
+        "seed": seed,
+        "rail": env.rail,
+        "stations": extract_station_info(env),
+        "agent_info": extract_agent_info(env),
+        "env_params": env_params
+    }
+
+    with open(save_path, "wb") as f:
+        pickle.dump(data, f)
+
+    return env
+
 # def get_or_solution():
 
 if __name__ == "__main__":
@@ -59,24 +85,25 @@ if __name__ == "__main__":
         "max_duration": 50
     }
 
+    save_dir = "or_solution_data"
+    os.makedirs(save_dir, exist_ok=True)
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--render", default=False, type=bool, help="If render image for debug.")
-    
+    parser.add_argument("--seed", default=0, type=int, help="Initial seed for data collection.")
+    parser.add_argument("--eps", default=100, type=int, help="Number of episodes to collect for dataset.")
     args = parser.parse_args()
 
-    seed = 0
+    seed_init = args.seed
+    n_eps = args.eps
 
-    for i in range (0, 10):
-        seed = i
-        print(f"*************************************")
-        print(f"******** Current Seeed: {seed} ********")
-        print(f"*************************************")
-
-        env = create_env(flatland_parameters, seed)
-        env.reset()
+    for i in tqdm(range(0, n_eps), desc="Generate OR solutions"):
+        seed = seed_init + i
+        action_save_path = os.path.join(save_dir, f"action_data_v2_{seed}.pkl")
+        env = save_env_data(flatland_parameters, save_dir, seed)
 
         framework = "LNS"  # "LNS" for large neighborhood search
-        default_group_size = 10 # max number of agents in a group.
+        default_group_size = flatland_parameters['number_of_agents'] # max number of agents in a group.
         max_iterations = 1000
         stop_threshold = 10
         agent_priority_strategy = 3
@@ -90,12 +117,14 @@ if __name__ == "__main__":
         solver.buildMCP()
 
         steps=0
+        actions = []
         while True:
         
             action = solver.getActions(env, steps, 3.0)
         
             # Debug
-            print(f"{steps}: {action}")
+            # print(f"{steps}: {action}")
+            actions.append(action)
 
             observation, all_rewards, done, info = env.step(action)
 
@@ -103,53 +132,8 @@ if __name__ == "__main__":
             if done['__all__']:
                 solver.clearMCP()
                 break
-
-    # env = create_env(flatland_parameters, seed)
-    # env.reset()
-
-    # #####################################################################
-    # # Initialize Mapf-solver
-    # #####################################################################
-    # framework = "LNS"  # "LNS" for large neighborhood search
-    # default_group_size = 10 # max number of agents in a group.
-    # max_iterations = 1000
-    # stop_threshold = 10
-    # agent_priority_strategy = 3
-    # neighbor_generation_strategy = 3
-    # debug = False
-    # time_limit =200
-    # replan = True
-
-    # solver = PythonCBS(env, framework, time_limit, default_group_size, debug, replan,stop_threshold,agent_priority_strategy,neighbor_generation_strategy)
-    # solver.search(1.1, max_iterations)
-    # solver.buildMCP()
-
-    # #####################################################################
-    # # Show the flatland visualization, for debugging
-    # #####################################################################
-    # if args.render:
-    #     env_renderer = RenderTool(env, screen_height=env.height * 50,
-    #                             screen_width=env.width*50,show_debug=False)
-    #     env_renderer.render_env(show=True, show_observations=False, show_predictions=False)
-    
-    # steps=0
-    # while True:
-    #     #####################################################################
-    #     # Simulation main loop
-    #     #####################################################################
         
-    #     action = solver.getActions(env, steps, 3.0)
+        with open(action_save_path, "wb") as f:
+            pickle.dump(actions, f)
         
-    #     # Debug
-    #     print(f"{steps}: {action}")
-
-    #     observation, all_rewards, done, info = env.step(action)
-        
-    #     if args.render:
-    #         env_renderer.render_env(show=True, show_observations=False, show_predictions=False)
-    #         time.sleep(0.5)
-
-    #     steps += 1
-    #     if done['__all__']:
-    #         solver.clearMCP()
-    #         break
+    print(f"✅ Flatland v{flatland.__version__} envs with action data saved in '{save_dir}/' folder.")
