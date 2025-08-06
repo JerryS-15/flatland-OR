@@ -130,7 +130,7 @@ if __name__ == "__main__":
             action = solver.getActions(env, steps, 3.0)
         
             # Debug
-            # print(f"{steps}: {action}")
+            print(f"{steps}: {action}")
             actions.append(action)
 
             observation, all_rewards, done, info = env.step(action)
