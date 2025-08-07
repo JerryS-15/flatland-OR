@@ -112,8 +112,9 @@ if __name__ == "__main__":
 
         env = save_env_data(flatland_parameters, save_dir, seed)
 
-        for i, agent in enumerate(env.agents):
-            print(f"Agent {i} earliest_departure: {agent.earliest_departure}")
+        for i in range(env.get_num_agents()):
+            earliest_departure = env.schedule.agents_schedule[i].earliest_departure
+            print(f"Agent {i} earliest_departure: {earliest_departure}")
 
         # for i, agent in enumerate(env.agents):
         #     print(f"Agent {i}:")
