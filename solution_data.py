@@ -16,7 +16,7 @@ import argparse
 import pickle
 import os
 from tqdm import tqdm
-import imageio
+# import imageio
 
 from env_v2_generator_test import extract_agent_info, extract_station_info
 
@@ -111,12 +111,12 @@ if __name__ == "__main__":
 
         env = save_env_data(flatland_parameters, save_dir, seed)
 
-        render_tool = RenderTool(env, agent_render_variant=AgentRenderVariant.ONE_STEP_BEHIND, show_debug=False)
-        render_tool.reset()
-        frames = []
-        env.reset()
-        render_tool.render_env(show=False, frames=True, show_observations=False)
-        frames.append(render_tool.get_image())
+        # render_tool = RenderTool(env, agent_render_variant=AgentRenderVariant.ONE_STEP_BEHIND, show_debug=False)
+        # render_tool.reset()
+        # frames = []
+        # env.reset()
+        # render_tool.render_env(show=False, frames=True, show_observations=False)
+        # frames.append(render_tool.get_image())
 
         framework = "LNS"  # "LNS" for large neighborhood search
         default_group_size = flatland_parameters['number_of_agents'] # max number of agents in a group.
@@ -139,13 +139,17 @@ if __name__ == "__main__":
             action = solver.getActions(env, steps, 3.0)
         
             # Debug
-            print(f"{steps}: {action}")
+            print(f"{steps} actions: {action}")
             actions.append(action)
 
             observation, all_rewards, done, info = env.step(action)
+            # Debug
+            print(f"{steps} obs: {observation}")
+            print(f"{steps} all_rewards: {all_rewards}")
+            print(f"{steps} done: {done}")
 
-            render_tool.render_env(show=False, frames=True, show_observations=False)
-            frames.append(render_tool.get_image())
+            # render_tool.render_env(show=False, frames=True, show_observations=False)
+            # frames.append(render_tool.get_image())
 
             steps += 1
             if done['__all__']:
@@ -155,7 +159,7 @@ if __name__ == "__main__":
         with open(action_save_path, "wb") as f:
             pickle.dump(actions, f)
 
-        video_path = os.path.join(save_dir, f"solution_render_{seed}.mp4")
-        imageio.mimsave(video_path, frames, fps=5)
+        # video_path = os.path.join(save_dir, f"solution_render_{seed}.mp4")
+        # imageio.mimsave(video_path, frames, fps=5)
         
     print(f"✅ Flatland v{flatland.__version__} envs with action data saved in '{save_dir}/' folder.")
