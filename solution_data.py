@@ -111,6 +111,12 @@ if __name__ == "__main__":
 
         env = save_env_data(flatland_parameters, save_dir, seed)
 
+        for i, agent in enumerate(env.agents):
+            print(f"Agent {i}:")
+            print(f"  Earliest Departure: {agent.earliest_departure}")
+            print(f"  Latest Arrival: {agent.latest_arrival}")
+        print(f"Max episode steps: {env._max_episode_steps}")
+
         # render_tool = RenderTool(env, agent_render_variant=AgentRenderVariant.ONE_STEP_BEHIND, show_debug=False)
         # render_tool.reset()
         # frames = []
