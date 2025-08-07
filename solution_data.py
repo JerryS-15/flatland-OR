@@ -164,6 +164,8 @@ if __name__ == "__main__":
 
             steps += 1
             if done['__all__']:
+                print(f"dones: {done}")
+                print("Current episode finished.")
                 solver.clearMCP()
                 break
         
