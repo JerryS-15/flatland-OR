@@ -36,13 +36,14 @@ def create_env(env_params, seed):
             speed_ratio_map=env_params['speed_ratio_map'],
         ),
         obs_builder_object=DummyObservationBuilder(),
-        malfunction_generator_and_process_data=malfunction_from_params(
-            MalfunctionParameters(
-                malfunction_rate=env_params['malfunction_rate'],
-                min_duration=env_params['min_duration'],
-                max_duration=env_params['max_duration']
-            )
-        ),
+        # malfunction_generator_and_process_data=malfunction_from_params(
+        #     MalfunctionParameters(
+        #         malfunction_rate=env_params['malfunction_rate'],
+        #         min_duration=env_params['min_duration'],
+        #         max_duration=env_params['max_duration']
+        #     )
+        # ),
+        malfunction_generator_and_process_data=None,
         remove_agents_at_target=True,
         random_seed=seed
     )
@@ -112,10 +113,13 @@ if __name__ == "__main__":
         env = save_env_data(flatland_parameters, save_dir, seed)
 
         for i, agent in enumerate(env.agents):
-            print(f"Agent {i}:")
-            print(f"  Earliest Departure: {agent.earliest_departure}")
-            print(f"  Latest Arrival: {agent.latest_arrival}")
-        print(f"Max episode steps: {env._max_episode_steps}")
+            print(f"Agent {i} earliest_departure: {agent.earliest_departure}")
+
+        # for i, agent in enumerate(env.agents):
+        #     print(f"Agent {i}:")
+        #     print(f"  Earliest Departure: {agent.earliest_departure}")
+        #     print(f"  Latest Arrival: {agent.latest_arrival}")
+        # print(f"Max episode steps: {env._max_episode_steps}")
 
         # render_tool = RenderTool(env, agent_render_variant=AgentRenderVariant.ONE_STEP_BEHIND, show_debug=False)
         # render_tool.reset()
@@ -150,9 +154,9 @@ if __name__ == "__main__":
 
             observation, all_rewards, done, info = env.step(action)
             # Debug
-            print(f"{steps} obs: {observation}")
-            print(f"{steps} all_rewards: {all_rewards}")
-            print(f"{steps} done: {done}")
+            # print(f"{steps} obs: {observation}")
+            # print(f"{steps} all_rewards: {all_rewards}")
+            # print(f"{steps} done: {done}")
 
             # render_tool.render_env(show=False, frames=True, show_observations=False)
             # frames.append(render_tool.get_image())
