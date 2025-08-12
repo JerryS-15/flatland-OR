@@ -80,7 +80,7 @@ if __name__ == "__main__":
         "max_num_cities": 3,
         "max_rails_between_cities": 2,
         "max_rail_pairs_in_city": 2,
-        "speed_ratio_map": {1.0: 1 / 4, 0.5: 1 / 4, 0.33: 1 / 4, 0.25: 1 / 4},
+        "speed_ratio_map": {1.0: 1 / 3, 0.5: 1 / 3, 0.25: 1 / 3},
         # Flatland - malfunction
         "malfunction_rate": 1 / 4500,
         "min_duration": 20,
