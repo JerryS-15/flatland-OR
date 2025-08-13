@@ -55,6 +55,9 @@ def save_env_data(env_params, save_dir, env_seed):
     env = create_env(env_params, seed)
     env.reset()
 
+    for i, agent in enumerate(env.agents):
+            print(f"Agent {i}: earliest_departure = {agent.earliest_departure}")
+
     data = {
         "seed": seed,
         "rail": env.rail,
