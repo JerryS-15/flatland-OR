@@ -75,11 +75,12 @@ if __name__ == "__main__":
     env = create_env(flatland_parameters, seed)
     env.reset()
 
-    print("### agent type in env ###")
-    print(type(env.agents[0]))
+    # print("### agent type in env ###")
+    # print(type(env.agents[0]))
 
     for i, agent in enumerate(env.agents):
         print(f"Agent {i} speed: {agent.speed_data}")
+        print(f"Agent {i} earliest_departure: {env._schedule.agents_schedule[i].earliest_departure}")
         # print(f"Agent {i}: earliest_departure = {agent.earliest_departure}")
 
     if env_renderer_enable:
