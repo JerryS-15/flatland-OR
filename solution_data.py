@@ -77,7 +77,7 @@ if __name__ == "__main__":
 
     flatland_parameters = {
         # Flatland Env
-        "number_of_agents": 2,
+        "number_of_agents": 5,
         "width": 30,
         "height": 35,
         "max_num_cities": 3,
@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--render", default=False, type=bool, help="If render image for debug.")
-    parser.add_argument("--seed", default=0, type=int, help="Initial seed for data collection.")
+    parser.add_argument("--seed", default=1, type=int, help="Initial seed for data collection.") # seed=0 generate random env in v2.2.1
     parser.add_argument("--eps", default=100, type=int, help="Number of episodes to collect for dataset.")
     args = parser.parse_args()
 
