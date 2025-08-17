@@ -90,9 +90,6 @@ if __name__ == "__main__":
         "max_duration": 50
     }
 
-    save_dir = "or_solution_data"
-    os.makedirs(save_dir, exist_ok=True)
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--render", default=False, type=bool, help="If render image for debug.")
     parser.add_argument("--seed", default=1, type=int, help="Initial seed for data collection.") # seed=0 generate random env in v2.2.1
@@ -108,6 +105,9 @@ if __name__ == "__main__":
     print(f"Number of episodes: {args.eps}")
     print(f"Number of agents: {flatland_parameters['number_of_agents']}")
     print("---------------------------------------")
+
+    save_dir = f"or_solution_data_agent_{flatland_parameters['number_of_agents']}"
+    os.makedirs(save_dir, exist_ok=True)
 
     for i in tqdm(range(0, n_eps), desc="Generate OR solutions"):
         seed = seed_init + i
@@ -153,7 +153,7 @@ if __name__ == "__main__":
             action = solver.getActions(env, steps, 3.0)
         
             # Debug
-            print(f"{steps} actions: {action}")
+            # print(f"{steps} actions: {action}")
             actions.append(action)
 
             observation, all_rewards, done, info = env.step(action)
