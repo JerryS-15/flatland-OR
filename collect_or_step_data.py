@@ -51,12 +51,13 @@ def get_or_actions(step):
 
 if __name__ == "__main__":
 
-    seed = 1
+    seed = 5
     env_renderer_enable = True
     fps = 30
 
     env_path = f"or_solution_data/env_data_v2_{seed}.pkl"
     action_path = f"or_solution_data/action_data_v2_{seed}.pkl"
+    step_path = f"or_solution_data/step_data_v2_{seed}.pkl"
 
     flatland_parameters = {
         # Flatland Env
@@ -90,6 +91,7 @@ if __name__ == "__main__":
         env_renderer.render_env(show=True, show_observations=False, show_predictions=False)
 
     steps = 0
+    step_data = []
     while True:
         action = get_or_actions(steps)
 
@@ -98,10 +100,27 @@ if __name__ == "__main__":
         steps += 1
 
         observation, all_rewards, done, info = env.step(action)
+        step_data_agents = []
         print(f"dones: {done}")
         for idx, agent in enumerate(env.agents):
+            agent_data = {
+                "handle": agent.handle,
+                "position": agent.position,
+                "direction": agent.direction,
+                "target": agent.target,
+                "initial_position": agent.initial_position,
+                "status": agent.status.name,  # 存为字符串
+                "speed": agent.speed_data["speed"],
+                "position_fraction": agent.speed_data["position_fraction"],
+                "malfunction": agent.malfunction_data["malfunction"],
+                "moving": agent.moving,
+            }
             print(f"Agent {idx} position: {agent.position}, direction: {agent.direction}, target={agent.target}, init={agent.initial_position}")
-            # print(f"Agent {idx} info: {agent.status.name}")
+            # print(f"Agent {idx} with data {agent}")
+            # step_data_agents.append(agent)
+            step_data_agents.append(agent_data)
+        
+        step_data.append(step_data_agents)
 
         if env_renderer_enable:
             env_renderer.render_env(show=True, show_observations=False, show_predictions=False)
@@ -110,3 +129,7 @@ if __name__ == "__main__":
         if done['__all__']:
             print("Finish episode.")
             break
+    
+    with open(step_path, "wb") as f:
+            pickle.dump(step_data, f)
+    print(f"✅ Flatland v{flatland.__version__} steps data with seed={seed} saved in '{step_path}'.")
