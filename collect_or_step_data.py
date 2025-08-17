@@ -5,6 +5,7 @@ import numpy as np
 import pickle
 import os
 from time import sleep
+from tqdm import tqdm
 
 import flatland
 from flatland.envs.rail_env import RailEnv
@@ -51,14 +52,9 @@ def get_or_actions(step):
 
 if __name__ == "__main__":
 
-    seed = 5
-    env_renderer_enable = True
-    fps = 30
-
-    env_path = f"or_solution_data/env_data_v2_{seed}.pkl"
-    action_path = f"or_solution_data/action_data_v2_{seed}.pkl"
-    step_path = f"or_solution_data/step_data_v2_{seed}.pkl"
-
+    # seed = 5
+    # env_renderer_enable = True
+    # fps = 30
     flatland_parameters = {
         # Flatland Env
         "number_of_agents": 5,
@@ -74,62 +70,63 @@ if __name__ == "__main__":
         "max_duration": 50
     }
 
-    env = create_env(flatland_parameters, seed)
-    env.reset()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--render", default=False, type=bool, help="If render image for debug.")
+    parser.add_argument("--seed", default=1, type=int, help="Initial seed for data collection.") # seed=0 generate random env in v2.2.1
+    parser.add_argument("--eps", default=100, type=int, help="Number of episodes to collect for dataset.")
+    args = parser.parse_args()
 
-    # print("### agent type in env ###")
-    # print(type(env.agents[0]))
+    seed_init = args.seed
+    n_eps = args.eps
 
-    for i, agent in enumerate(env.agents):
-        print(f"Agent {i} speed: {agent.speed_data}")
-        # print(f"Agent {i} earliest_departure: {env.schedule.agents_schedule[i].earliest_departure}")
-        # print(f"Agent {i}: earliest_departure = {agent.earliest_departure}")
+    print("---------------------------------------")
+    print(f"OR Solution Step-wise Data Collection Started.")
+    print(f"Number of episodes: {args.eps}")
+    print(f"Number of agents: {flatland_parameters['number_of_agents']}")
+    print("---------------------------------------")
 
-    if env_renderer_enable:
-        env_renderer = RenderTool(env, screen_height=env.height * 50,
-                              screen_width=env.width*50,show_debug=False)
-        env_renderer.render_env(show=True, show_observations=False, show_predictions=False)
+    save_dir = f"or_solution_data_agent_{flatland_parameters['number_of_agents']}"
 
-    steps = 0
-    step_data = []
-    while True:
-        action = get_or_actions(steps)
+    for i in tqdm(range(0, n_eps), desc="Generate step-wise data"):
+        seed = seed_init + i
 
-        print(f"{steps}: {action}")
+        env_path = f"{save_dir}/env_data_v2_{seed}.pkl"
+        action_path = f"{save_dir}/action_data_v2_{seed}.pkl"
+        step_path = f"{save_dir}/step_data_v2_{seed}.pkl"
 
-        steps += 1
+        env = create_env(flatland_parameters, seed)
+        env.reset()
 
-        observation, all_rewards, done, info = env.step(action)
-        step_data_agents = []
-        print(f"dones: {done}")
-        for idx, agent in enumerate(env.agents):
-            agent_data = {
-                "handle": agent.handle,
-                "position": agent.position,
-                "direction": agent.direction,
-                "target": agent.target,
-                "initial_position": agent.initial_position,
-                "status": agent.status.name,  # 存为字符串
-                "speed": agent.speed_data["speed"],
-                "position_fraction": agent.speed_data["position_fraction"],
-                "malfunction": agent.malfunction_data["malfunction"],
-                "moving": agent.moving,
-            }
-            print(f"Agent {idx} position: {agent.position}, direction: {agent.direction}, target={agent.target}, init={agent.initial_position}")
-            # print(f"Agent {idx} with data {agent}")
-            # step_data_agents.append(agent)
-            step_data_agents.append(agent_data)
+        steps = 0
+        step_data = []
+        while True:
+            action = get_or_actions(steps)
+            steps += 1
+            observation, all_rewards, done, info = env.step(action)
+            step_data_agents = []
+            for idx, agent in enumerate(env.agents):
+                agent_data = {
+                    "handle": agent.handle,
+                    "position": agent.position,
+                    "direction": agent.direction,
+                    "target": agent.target,
+                    "initial_position": agent.initial_position,
+                    "status": agent.status.name,  # 存为字符串
+                    "speed": agent.speed_data["speed"],
+                    "position_fraction": agent.speed_data["position_fraction"],
+                    "malfunction": agent.malfunction_data["malfunction"],
+                    "moving": agent.moving,
+                }
+                # print(f"Agent {idx} position: {agent.position}, direction: {agent.direction}, target={agent.target}, init={agent.initial_position}")
+                # print(f"Agent {idx} with data {agent}")
+                step_data_agents.append(agent_data)
         
-        step_data.append(step_data_agents)
+            step_data.append(step_data_agents)
 
-        if env_renderer_enable:
-            env_renderer.render_env(show=True, show_observations=False, show_predictions=False)
-            sleep(1 / fps)
-
-        if done['__all__']:
-            print("Finish episode.")
-            break
+            if done['__all__']:
+                # print("Finish episode.")
+                break
     
-    with open(step_path, "wb") as f:
+        with open(step_path, "wb") as f:
             pickle.dump(step_data, f)
-    print(f"✅ Flatland v{flatland.__version__} steps data with seed={seed} saved in '{step_path}'.")
+    print(f"✅ Flatland v{flatland.__version__} steps data with {n_eps} episodes saved in '{save_dir}/'.")
