@@ -55,9 +55,21 @@ if __name__ == "__main__":
     # seed = 5
     # env_renderer_enable = True
     # fps = 30
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--render", default=False, type=bool, help="If render image for debug.")
+    parser.add_argument("--seed", default=1, type=int, help="Initial seed for data collection.") # seed=0 generate random env in v2.2.1
+    parser.add_argument("--eps", default=100, type=int, help="Number of episodes to collect for dataset.")
+    parser.add_argument("--n-agents", default=5, type=int, help="Number of agents for data collection.")
+    args = parser.parse_args()
+
+    seed_init = args.seed
+    n_eps = args.eps
+    n_agents = args.n_agents
+
     flatland_parameters = {
         # Flatland Env
-        "number_of_agents": 5,
+        "number_of_agents": n_agents,
         "width": 30,
         "height": 35,
         "max_num_cities": 3,
@@ -69,15 +81,6 @@ if __name__ == "__main__":
         "min_duration": 20,
         "max_duration": 50
     }
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--render", default=False, type=bool, help="If render image for debug.")
-    parser.add_argument("--seed", default=1, type=int, help="Initial seed for data collection.") # seed=0 generate random env in v2.2.1
-    parser.add_argument("--eps", default=100, type=int, help="Number of episodes to collect for dataset.")
-    args = parser.parse_args()
-
-    seed_init = args.seed
-    n_eps = args.eps
 
     print("---------------------------------------")
     print(f"OR Solution Step-wise Data Collection Started.")
