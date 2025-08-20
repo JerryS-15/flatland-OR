@@ -60,7 +60,7 @@ if __name__ == "__main__":
     parser.add_argument("--render", default=False, type=bool, help="If render image for debug.")
     parser.add_argument("--seed", default=1, type=int, help="Initial seed for data collection.") # seed=0 generate random env in v2.2.1
     parser.add_argument("--eps", default=100, type=int, help="Number of episodes to collect for dataset.")
-    parser.add_argument("--n-agents", default=5, type=int, help="Number of agents for data collection.")
+    parser.add_argument("--n_agents", default=5, type=int, help="Number of agents for data collection.")
     args = parser.parse_args()
 
     seed_init = args.seed
