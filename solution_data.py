@@ -36,14 +36,14 @@ def create_env(env_params, seed):
             speed_ratio_map=env_params['speed_ratio_map'],
         ),
         obs_builder_object=DummyObservationBuilder(),
-        # malfunction_generator_and_process_data=malfunction_from_params(
-        #     MalfunctionParameters(
-        #         malfunction_rate=env_params['malfunction_rate'],
-        #         min_duration=env_params['min_duration'],
-        #         max_duration=env_params['max_duration']
-        #     )
-        # ),
-        malfunction_generator_and_process_data=None,
+        malfunction_generator_and_process_data=malfunction_from_params(
+            MalfunctionParameters(
+                malfunction_rate=env_params['malfunction_rate'],
+                min_duration=env_params['min_duration'],
+                max_duration=env_params['max_duration']
+            )
+        ),
+        # malfunction_generator_and_process_data=None,
         remove_agents_at_target=True,
         random_seed=seed
     )
